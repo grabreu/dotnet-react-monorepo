@@ -7,5 +7,7 @@
   <Folder Name="/src/">
     <Project Path="src/Monorepo.Api/Monorepo.Api.csproj" Id="17b034e9-aef5-44af-ae6a-bababa113c60" />
   </Folder>
-  <Folder Name="/tests/" />
+  <Folder Name="/tests/">
+    <Project Path="tests/Monorepo.UnitTests/Monorepo.UnitTests.csproj" Id="cd17f7ac-cc1a-42b4-9f7f-22c2512e7f94" />
+  </Folder>
 </Solution>
