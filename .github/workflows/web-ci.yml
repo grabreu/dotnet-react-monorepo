@@ -1,0 +1,67 @@
+name: Web CI
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: web-ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Changes
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: read
+
+    outputs:
+      web: ${{ steps.filter.outputs.web }}
+
+    steps:
+      - name: Filter
+        uses: dorny/paths-filter@v4.0.3
+        id: filter
+        with:
+          filters: |
+            web:
+              - 'apps/web/**'
+              - '.github/workflows/web-*.yml'
+              - '.github/workflows/_web-*.yml'
+
+  check:
+    name: Check
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: apps/web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6.0.10
+        with:
+          package_json_file: apps/web/package.json
+
+      - name: Setup Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "24"
+          cache: pnpm
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check
+        run: pnpm exec biome ci
