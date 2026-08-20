@@ -135,7 +135,7 @@ jobs:
           projectBaseDir: apps/web
           args: >
             -Dsonar.organization=grabreu
-            -Dsonar.projectKey=grabreu_dotnet-react-monorepo_web
+            -Dsonar.projectKey=grabreu_monorepo_web
             -Dsonar.sources=src
             -Dsonar.test.inclusions=**/*.test.ts,**/*.test.tsx
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
