@@ -97,11 +97,13 @@ az staticwebapp create `
   --sku Free
 ```
 
-## 7. Values for this repo's GitHub Secrets
+## 7. Values for this repo's GitHub Variables
 
-`AZURE_CLIENT_ID`, `AZURE_TENANT_ID` and `AZURE_SUBSCRIPTION_ID` are the same across all repos — see `shared-setup.md`. Only this one is app-specific:
+`AZURE_CLIENT_ID`, `AZURE_TENANT_ID` and `AZURE_SUBSCRIPTION_ID` are the same across all repos — see `shared-setup.md`.
+
+## 8. Values for this repo's GitHub Secrets
 
 ```powershell
-# AZURE_STATIC_WEB_APPS_API_TOKEN
+# AZURE_STATIC_WEB_APPS_API_TOKEN — app-specific
 az staticwebapp secrets list --name swa-<app>-web-prod-brs --resource-group rg-shared-prod-brs --query "properties.apiKey"
 ```
