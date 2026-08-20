@@ -3,6 +3,9 @@ name: API CD
 on:
   push:
     branches: [main]
+    paths:
+      - "apps/api/**"
+      - ".github/workflows/api-cd.yml"
   workflow_dispatch:
 
 permissions:
@@ -13,35 +16,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  changes:
-    name: Changes
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      pull-requests: read
-
-    outputs:
-      api: ${{ steps.filter.outputs.api }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
-      - name: Filter
-        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4
-        id: filter
-        with:
-          filters: |
-            api:
-              - 'apps/api/**'
-              - '.github/workflows/api-*.yml'
-              - '.github/workflows/_api-*.yml'
-
   format:
     name: Format
-    needs: changes
-    if: needs.changes.outputs.api == 'true'
     runs-on: ubuntu-latest
 
     defaults:
@@ -69,8 +45,6 @@ jobs:
 
   unit-tests:
     name: Unit tests
-    needs: changes
-    if: needs.changes.outputs.api == 'true'
     runs-on: ubuntu-latest
 
     defaults:
@@ -107,8 +81,6 @@ jobs:
 
   integration-tests:
     name: Integration tests
-    needs: changes
-    if: needs.changes.outputs.api == 'true'
     runs-on: ubuntu-latest
 
     defaults:
@@ -145,8 +117,7 @@ jobs:
 
   sonarcloud:
     name: SonarCloud
-    needs: [changes, format, unit-tests, integration-tests]
-    if: needs.changes.outputs.api == 'true'
+    needs: [format, unit-tests, integration-tests]
     runs-on: ubuntu-latest
 
     permissions:
@@ -229,8 +200,7 @@ jobs:
 
   publish:
     name: Publish
-    needs: [changes, sonarcloud]
-    if: needs.changes.outputs.api == 'true'
+    needs: sonarcloud
     runs-on: ubuntu-latest
 
     permissions:
@@ -285,8 +255,7 @@ jobs:
 
   deploy:
     name: Deploy
-    needs: [changes, publish]
-    if: needs.changes.outputs.api == 'true'
+    needs: publish
     runs-on: ubuntu-latest
     environment: prod
 

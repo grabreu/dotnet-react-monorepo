@@ -31,8 +31,7 @@ jobs:
           filters: |
             api:
               - 'apps/api/**'
-              - '.github/workflows/api-*.yml'
-              - '.github/workflows/_api-*.yml'
+              - '.github/workflows/api-ci.yml'
 
   format:
     name: Format
