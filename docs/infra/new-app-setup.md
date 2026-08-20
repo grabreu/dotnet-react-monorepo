@@ -74,9 +74,9 @@ Create `credential.json` (immutable format: `OWNER@OWNER-ID/REPO@REPO-ID`):
 
 ```json
 {
-  "name": "<app>-main",
+  "name": "<app>-env-prod",
   "issuer": "https://token.actions.githubusercontent.com",
-  "subject": "repo:grabreu@<USER_ID>/<app>@<REPO_ID>:ref:refs/heads/main",
+  "subject": "repo:grabreu@<USER_ID>/<app>@<REPO_ID>:environment:prod",
   "audiences": ["api://AzureADTokenExchange"]
 }
 ```
