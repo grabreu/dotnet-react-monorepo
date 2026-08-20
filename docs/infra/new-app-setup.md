@@ -55,7 +55,9 @@ az containerapp update `
   --set-env-vars "ConnectionStrings__Default=Server=tcp:sql-shared-prod-brs-grabreu.database.windows.net,1433;Initial Catalog=sqldb-<app>-prod;Encrypt=True;TrustServerCertificate=False;Authentication=\"Active Directory Default\";"
 ```
 
-## 5. Federated credential per repo, on the shared App Registration
+## 5. Federated credential for the API deploy, on the shared App Registration
+
+Only the API deploy uses OIDC (`azure/login`) — the Static Web App deploy in step 8 uses its own token instead, no federated credential needed for it.
 
 Repos created after 2026-07-15 use the **immutable** subject claim format (numeric ID, survives org/repo renames) instead of the old name-based one — see [official docs](https://docs.github.com/en/actions/reference/security/oidc#immutable-subject-claims). Get the IDs:
 
@@ -74,9 +76,9 @@ Create `credential.json` (immutable format: `OWNER@OWNER-ID/REPO@REPO-ID`):
 
 ```json
 {
-  "name": "<app>-env-prod",
+  "name": "<app>-env-prod-api",
   "issuer": "https://token.actions.githubusercontent.com",
-  "subject": "repo:grabreu@<USER_ID>/<app>@<REPO_ID>:environment:prod",
+  "subject": "repo:grabreu@<USER_ID>/<app>@<REPO_ID>:environment:prod-api",
   "audiences": ["api://AzureADTokenExchange"]
 }
 ```
@@ -97,11 +99,15 @@ az staticwebapp create `
   --sku Free
 ```
 
-## 7. Values for this repo's GitHub Variables
+## 7. Create the `prod-api` and `prod-web` environments in this repo
+
+Restrict deployment branches to `main` on both.
+
+### `prod-api` environment: Variables
 
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID` and `AZURE_SUBSCRIPTION_ID` are the same across all repos — see `shared-setup.md`.
 
-## 8. Values for this repo's GitHub Secrets
+### `prod-web` environment: Secret
 
 ```powershell
 # AZURE_STATIC_WEB_APPS_API_TOKEN — app-specific

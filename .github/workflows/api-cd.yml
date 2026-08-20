@@ -257,7 +257,7 @@ jobs:
     name: Deploy
     needs: publish
     runs-on: ubuntu-latest
-    environment: prod
+    environment: prod-api
 
     permissions:
       contents: read
