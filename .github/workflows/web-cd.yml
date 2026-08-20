@@ -1,42 +1,23 @@
-name: Web CI
+name: Web CD
 
 on:
-  pull_request:
+  push:
     branches: [main]
+    paths:
+      - "apps/web/**"
+      - ".github/workflows/web-cd.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: web-ci-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: web-cd-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  changes:
-    name: Changes
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      pull-requests: read
-
-    outputs:
-      web: ${{ steps.filter.outputs.web }}
-
-    steps:
-      - name: Filter
-        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4
-        id: filter
-        with:
-          filters: |
-            web:
-              - 'apps/web/**'
-              - '.github/workflows/web-ci.yml'
-
   check:
     name: Check
-    needs: changes
-    if: needs.changes.outputs.web == 'true'
     runs-on: ubuntu-latest
 
     defaults:
@@ -67,8 +48,6 @@ jobs:
 
   test:
     name: Test
-    needs: changes
-    if: needs.changes.outputs.web == 'true'
     runs-on: ubuntu-latest
 
     defaults:
@@ -105,13 +84,8 @@ jobs:
 
   sonarcloud:
     name: SonarCloud
-    needs: [changes, test]
-    if: needs.changes.outputs.web == 'true'
+    needs: [check, test]
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      pull-requests: write
 
     defaults:
       run:
@@ -141,3 +115,62 @@ jobs:
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_WEB }}
+
+  build:
+    name: Build
+    needs: sonarcloud
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: apps/web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@ff378ebe6b225b0680b81c1ad4498ae0d1d3a5e3 # v6
+        with:
+          package_json_file: apps/web/package.json
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: "24"
+          cache: pnpm
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Upload build output
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: dist
+          path: apps/web/dist
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment: 'prod-web'
+
+    steps:
+      - name: Download build output
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: dist
+          path: apps/web/dist
+
+      - name: Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9 # v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: apps/web/dist
+          skip_app_build: true
