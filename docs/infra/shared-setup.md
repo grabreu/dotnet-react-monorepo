@@ -110,7 +110,7 @@ az role assignment create `
 
 This App Registration is **reused by every app** — don't recreate it per app, just add a new federated credential per repository (see `new-app-setup.md`).
 
-## Fixed values for GitHub Variables (same across all API repos)
+## Fixed values for the `prod-api` environment (same across all API repos)
 
 ```powershell
 # AZURE_CLIENT_ID
