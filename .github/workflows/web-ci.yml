@@ -30,8 +30,8 @@ jobs:
         with:
           filters: |
             web:
-              - 'apps/web/**'
-              - '.github/workflows/web-ci.yml'
+              - apps/web/**
+              - .github/workflows/web-ci.yml
 
   check:
     name: Check

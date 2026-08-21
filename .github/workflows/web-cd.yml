@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "apps/web/**"
-      - ".github/workflows/web-cd.yml"
+      - apps/web/**
+      - .github/workflows/web-cd.yml
   workflow_dispatch:
 
 permissions:
@@ -158,7 +158,7 @@ jobs:
     name: Deploy
     needs: build
     runs-on: ubuntu-latest
-    environment: 'prod-web'
+    environment: prod-web
 
     steps:
       - name: Download build output
