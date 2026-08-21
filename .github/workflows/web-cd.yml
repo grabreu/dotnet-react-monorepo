@@ -158,7 +158,9 @@ jobs:
     name: Deploy
     needs: build
     runs-on: ubuntu-latest
-    environment: prod-web
+    environment:
+      name: prod-web
+      url: https://gray-field-0d74a620f.7.azurestaticapps.net/
 
     steps:
       - name: Download build output
