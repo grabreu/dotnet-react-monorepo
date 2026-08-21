@@ -1,4 +1,4 @@
-# monorepo
+# Monorepo
 
 ![API CI](https://github.com/grabreu/monorepo/actions/workflows/api-ci.yml/badge.svg)
 ![Web CI](https://github.com/grabreu/monorepo/actions/workflows/web-ci.yml/badge.svg)
