@@ -141,7 +141,7 @@ jobs:
   sonarcloud:
     name: SonarCloud
     needs: [changes, format, unit-tests, integration-tests]
-    if: needs.changes.outputs.api == 'true'
+    if: needs.changes.outputs.api == 'true' && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
 
     permissions:
