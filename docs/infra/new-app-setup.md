@@ -99,7 +99,20 @@ az staticwebapp create `
   --sku Free
 ```
 
-## 7. Create the `prod-api` and `prod-web` environments in this repo
+## 7. Point the Container App's CORS policy at the Static Web App
+
+```powershell
+$webHost = az staticwebapp show --name swa-<app>-web-prod-brs --resource-group rg-shared-prod-brs --query defaultHostname -o tsv
+
+az containerapp update `
+  --name ca-<app>-api-prod-brs `
+  --resource-group rg-shared-prod-brs `
+  --set-env-vars `
+    "ConnectionStrings__Default=Server=tcp:sql-shared-prod-brs-grabreu.database.windows.net,1433;Initial Catalog=sqldb-<app>-prod;Encrypt=True;TrustServerCertificate=False;Authentication=\"Active Directory Default\";" `
+    "Cors__AllowedOrigins__0=https://$webHost"
+```
+
+## 8. Create the `prod-api` and `prod-web` environments in this repo
 
 Restrict deployment branches to `main` on both.
 
