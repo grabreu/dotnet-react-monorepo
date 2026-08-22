@@ -4,7 +4,7 @@
 ![Web CI](https://github.com/grabreu/monorepo/actions/workflows/web-ci.yml/badge.svg)
 [![Quality Gate - API](https://sonarcloud.io/api/project_badges/measure?project=grabreu_monorepo_api&metric=alert_status)](https://sonarcloud.io/dashboard?id=grabreu_monorepo_api)
 [![Quality Gate - Web](https://sonarcloud.io/api/project_badges/measure?project=grabreu_monorepo_web&metric=alert_status)](https://sonarcloud.io/dashboard?id=grabreu_monorepo_web)
-![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+[![License](https://img.shields.io/github/license/grabreu/monorepo)](https://github.com/grabreu/monorepo/blob/main/LICENSE)
 
 Explore and validate a .NET + React monorepo foundation — repo structure, CI/CD, and GitHub conventions — using ASP.NET Core, Vite, and TanStack Router.
 
