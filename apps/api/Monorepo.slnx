@@ -1,8 +1,10 @@
 <Solution>
   <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
     <File Path=".gitignore" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Monorepo.Api/Monorepo.Api.csproj" Id="17b034e9-aef5-44af-ae6a-bababa113c60" />
