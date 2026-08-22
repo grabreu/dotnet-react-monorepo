@@ -1,3 +1,5 @@
 allowBuilds:
   esbuild: true
   lightningcss: true
+overrides:
+  "@hey-api/openapi-ts>typescript": "6.0.3"

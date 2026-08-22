@@ -1,12 +1,21 @@
+import { QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
+import { client } from "./lib/api/client.gen";
+import { queryClient } from "./lib/query/queryClient";
 import { routeTree } from "./routeTree.gen";
 
 import "./index.css";
 
+client.setConfig({ baseUrl: import.meta.env.VITE_API_URL });
+
 const router = createRouter({
   routeTree,
+  context: {
+    queryClient,
+  },
   defaultPreload: "intent",
+  defaultPreloadStaleTime: 0,
   scrollRestoration: true,
 });
 
@@ -24,5 +33,9 @@ if (!rootElement) {
 
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
-  root.render(<RouterProvider router={router} />);
+  root.render(
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>,
+  );
 }
